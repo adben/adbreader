@@ -48,7 +48,7 @@ public class NetworkActivity extends Activity {
 	public static final String WIFI = "Wi-Fi";
 	public static final String ANY = "Any";
 	private static final String URL = "http://stackoverflow.com/feeds/tag?tagnames=android&sort=newest";
-	private static final String DEBUG_TAG = "NetworkActivity debug ";
+	private static final String DEBUG_TAG = "NetworkActivity debug";
 
 	// Whether there is a Wi-Fi connection.
 	private static boolean wifiConnected = false;
@@ -90,7 +90,7 @@ public class NetworkActivity extends Activity {
 		// is the default value to use if a preference value is not found.
 		setsPref(sharedPrefs.getString("listPref", "Wi-Fi"));
 
-		updateConnectionStatus();
+		updateConnectedFlags();
 
 		// Only loads the page if refreshDisplay is true. Otherwise, keeps
 		// previous
@@ -114,14 +114,14 @@ public class NetworkActivity extends Activity {
 		}
 	}
 
-	/*
-	 * Checks the network connection and sets the wifiConnected and mobileConnected variables accordingly
-	 */
-	private void updateConnectionStatus() {
+	// Checks the network connection and sets the wifiConnected and
+	// mobileConnected
+	// variables accordingly.
+	private void updateConnectedFlags() {
 		ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo activeInfo = connMgr.getActiveNetworkInfo();
 		if (activeInfo != null && activeInfo.isConnected()) {
-			// the connectivity with wifi was established
+			// the connectivity with wifi was stablished
 			wifiConnected = activeInfo.getType() == ConnectivityManager.TYPE_WIFI;
 			mobileConnected = activeInfo.getType() == ConnectivityManager.TYPE_MOBILE;
 		} else {
