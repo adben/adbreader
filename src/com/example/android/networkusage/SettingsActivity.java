@@ -18,7 +18,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
-import com.example.android.networkusage.R;
 
 /**
  * This preference activity has in its manifest declaration an intent filter for
@@ -27,7 +26,7 @@ import com.example.android.networkusage.R;
  */
 public class SettingsActivity extends PreferenceActivity
         implements
-            OnSharedPreferenceChangeListener {
+        OnSharedPreferenceChangeListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +60,6 @@ public class SettingsActivity extends PreferenceActivity
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         // Sets refreshDisplay to true so that when the user returns to the main
         // activity, the display refreshes to reflect the new settings.
-		NetworkActivity.setRefreshDisplay(true);
+        NetworkActivity.setRefreshDisplay(true);
     }
 }
