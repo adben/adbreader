@@ -10,8 +10,7 @@ import android.util.Log;
 import android.util.Xml;
 
 /**
- * Parse the newsYcombinator rss based on the requested feed Uses the
- * XmlPullParser for android skiping the unneeded(s) tags
+ * Parse rss feeds using XmlPullParser for android 
  * 
  * @author abenedetti
  */

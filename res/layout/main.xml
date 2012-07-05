@@ -4,9 +4,21 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-<WebView  xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/webview"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-/>
+    <ListView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/android:list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <WebView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/webview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" />
+	
+    <!--  Button 
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/button_main"
+        android:layout_height="@string/button_size_height"
+        android:layout_width="@string/button_size_width" /-->
 </LinearLayout>
