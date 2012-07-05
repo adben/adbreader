@@ -57,13 +57,11 @@ public class NetworkActivity extends Activity {
     // Whether the display should be refreshed.
     private static boolean refreshDisplay = true;
 
-    private static ConnectivityManager connManager = null;
-
     // The user's current network preference setting.
     private static String sPref = null;
 
     // The BroadcastReceiver that tracks network connectivity changes.
-    private NetworkReceiver receiver = new NetworkReceiver(this);
+    private NetworkReceiver receiver = new NetworkReceiver();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,7 +70,7 @@ public class NetworkActivity extends Activity {
         // Register BroadcastReceiver to track connection changes.
         IntentFilter filter = new IntentFilter(
                 ConnectivityManager.CONNECTIVITY_ACTION);
-        receiver = new NetworkReceiver(this);
+        receiver = new NetworkReceiver();
         this.registerReceiver(receiver, filter);
     }
 

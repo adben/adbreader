@@ -31,7 +31,6 @@ public class SettingsActivity extends PreferenceActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         // Loads the XML preferences file.
         addPreferencesFromResource(R.xml.preferences);
     }
@@ -39,7 +38,6 @@ public class SettingsActivity extends PreferenceActivity
     @Override
     protected void onResume() {
         super.onResume();
-
         // Registers a callback to be invoked whenever a user changes a preference.
         getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
     }
