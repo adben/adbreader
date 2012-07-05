@@ -2,11 +2,9 @@ package com.example.android.networkusage;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.channels.IllegalSelectorException;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.util.Log;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -24,6 +22,7 @@ public class NewsYCombinatorParser {
 	 */
 	private static final String ns = null;
 	private static final String DEBUG_TAG = "NewsYCombinatorParser";
+	private boolean done;
 
 	public List<Entry> parse(InputStream in) throws XmlPullParserException,
 			IOException {
@@ -43,7 +42,7 @@ public class NewsYCombinatorParser {
 		List<Entry> entries = new ArrayList<Entry>();
 
 		parser.require(XmlPullParser.START_TAG, ns, "rss");
-		while (parser.next() != XmlPullParser.END_TAG) {
+		while (parser.next() != XmlPullParser.END_TAG ) {
 			if (parser.getEventType() != XmlPullParser.START_TAG) {
 				continue;
 			}
@@ -63,9 +62,6 @@ public class NewsYCombinatorParser {
 		parser.require(XmlPullParser.START_TAG, ns, "channel");
 		List<Entry> entries = new ArrayList<Entry>();
 		while (parser.next() != XmlPullParser.END_TAG) {
-			if (parser.getEventType() != XmlPullParser.START_TAG) {
-				continue;
-			}
 			String name = parser.getName();
 			// Starts by looking for the channel tag
 			if (name.equalsIgnoreCase("item")) {
@@ -73,6 +69,9 @@ public class NewsYCombinatorParser {
 			} else {
                 skip(parser);
             }
+		}
+		if (parser.getEventType() != XmlPullParser.START_TAG) {
+			done = true; // Obsolete code the channel
 		}
 		return entries;
 	}
