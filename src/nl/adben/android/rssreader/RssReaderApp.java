@@ -70,6 +70,7 @@ import android.widget.Toast;
 public class RssReaderApp extends ListActivity {
 	public static final String WIFI = "Wi-Fi";
 	public static final String ANY = "Any";
+	public static final String DEFAULT_URL = "http://news.ycombinator.com/rss";
 	/*
 	 * Whether there is a Wi-Fi connection.
 	 */
@@ -128,7 +129,7 @@ public class RssReaderApp extends ListActivity {
 		 * the default value to use if a preference value is not found.
 		 */
 		setsPref(sharedPrefs.getString("listPref", WIFI));
-		setsUrl(sharedPrefs.getString("listUrlPref", "newsycombinator"));
+		setsUrl(sharedPrefs.getString("listUrlPref", DEFAULT_URL));
 
 		updateConnectionStatus();
 
