@@ -7,9 +7,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Pojo for encapsulates the RSS entry object
- * @author abenedetti
- *
+ * Encapsulates the RSS entry object
+ * @author Adolfo Benedetti
  */
 public class Entry implements Comparable<Entry> {
 	static SimpleDateFormat FORMATTER = new SimpleDateFormat(
@@ -27,7 +26,6 @@ public class Entry implements Comparable<Entry> {
 		this.title = title.trim();
 	}
 
-	// getters and setters omitted for brevity
 	public URL getLink() {
 		return link;
 	}

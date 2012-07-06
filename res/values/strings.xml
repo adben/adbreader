@@ -22,4 +22,9 @@
     <string name="stream_closed_debug">InputStream to closed : needed after the app is finished using it</string>
     <string name="query_started">Quering process started</string>
     <string name="url_detail">Requested url: </string>
+    
+    <!-- Receiver -->
+    <string name="wifi_conn">Device has its Wifi connnection. RSS feeds WILL be refreshed</string>
+    <string name="other_conn">Device has another connnection. RSS Feeds WILL be refreshed</string>
+    <string name="other_conn_no_refresh">Device has another connnection. RSS Feeds will be NOT refreshed</string>
 </resources>

@@ -51,38 +51,51 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 /**
- * Main Activity for the sample application.
+ * Main Activity for the Rss Reader application.
  * <p/>
  * This activity does the following:
  * <p/>
- * o Presents a WebView screen to users. This WebView has a list of HTML links
- * to the latest questions tagged 'android' on stackoverflow.com.
+ * o Presents TextViews that has a list of HTML links to the latest items from
+ * the selected rss feed
  * <p/>
- * o Parses the StackOverflow XML feed using XMLPullParser.
+ * o Parses the rss feed using XMLPullParser.
  * <p/>
  * o Uses AsyncTask to download and process the XML feed.
  * <p/>
  * o Monitors preferences and the device's network connection to determine
- * whether to refresh the WebView content.
+ * whether to refresh the TextView content.
+ * 
+ * @author Adolfo Benedetti
  */
 public class RssReaderApp extends ListActivity {
 	public static final String WIFI = "Wi-Fi";
 	public static final String ANY = "Any";
 	private static final String URL = "http://news.ycombinator.com/rss";
-	private static final String APP_TAG = "NetworkActivity debug";
-	private static final String LISTENER_TAG = "TextViewListener";
-
-
-	// Whether there is a Wi-Fi connection.
+	/*
+	 * Whether there is a Wi-Fi connection.
+	 */
 	private static boolean wifiConnected = false;
-	// Whether there is a mobile connection.
+	/*
+	 * Whether there is a mobile connection.
+	 */
 	private static boolean mobileConnected = false;
-	// Whether the display should be refreshed.
+	/*
+	 * Whether the display should be refreshed.
+	 */
 	private static boolean refreshDisplay = true;
-	// The user's current network preference setting.
+	/*
+	 * The user's current network preference setting.
+	 */
 	private static String sPref = null;
-	// The BroadcastReceiver that tracks network connectivity changes.
+	/*
+	 * The BroadcastReceiver that tracks network connectivity changes.
+	 */
 	private NetworkReceiver receiver = new NetworkReceiver();
+	/*
+	 * Tag log
+	 */
+	private String applicationTag = this.getClass().getSimpleName();
+
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -95,8 +108,10 @@ public class RssReaderApp extends ListActivity {
 		this.registerReceiver(receiver, filter);
 	}
 
-	// Refreshes the display if the network connection and the
-	// pref settings allow it.
+	/**
+	 * Refreshes the display if the network connection and the pref settings
+	 * allow it.
+	 */
 	@Override
 	public void onStart() {
 		super.onStart();
@@ -105,21 +120,21 @@ public class RssReaderApp extends ListActivity {
 		SharedPreferences sharedPrefs = PreferenceManager
 				.getDefaultSharedPreferences(this);
 
-		// Retrieves a string value for the preferences. The second parameter
-		// is the default value to use if a preference value is not found.
-		setsPref(sharedPrefs.getString("listPref", "Wi-Fi"));
+		/*
+		 * Retrieves a string value for the preferences. The second parameter is
+		 * the default value to use if a preference value is not found.
+		 */
+		setsPref(sharedPrefs.getString("listPref", WIFI));
 
 		updateConnectionStatus();
 
-		// Only loads the page if refreshDisplay is true. Otherwise, keeps
-		// previous
-		// display. For example, if the user has set "Wi-Fi only" in prefs and
-		// the
-		// device loses its Wi-Fi connection midway through the user using the
-		// app,
-		// you don't want to refresh the display--this would force the display
-		// of
-		// an error page instead of newsycombinator.com content.
+		/*
+		 * Only loads the TextView feeds if refreshDisplay is true. Otherwise,
+		 * keeps previous display. For example, if the user has set "Wi-Fi only"
+		 * in prefs and the device loses its Wi-Fi connection midway through the
+		 * user using the app, you don't want to refresh the display--this would
+		 * force the display of an error page instead of feed content.
+		 */
 		if (isRefreshDisplay()) {
 			loadRss();
 		}
@@ -136,7 +151,7 @@ public class RssReaderApp extends ListActivity {
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
-		Log.d(APP_TAG, getResources().getString(R.string.selected_item) + id);
+		Log.d(applicationTag, getResources().getString(R.string.selected_item) + id);
 
 	}
 
@@ -147,7 +162,7 @@ public class RssReaderApp extends ListActivity {
 		return true;
 	}
 
-	/*
+	/**
 	 * Checks the network connection and sets the wifiConnected and
 	 * mobileConnected variables accordingly
 	 */
@@ -163,17 +178,19 @@ public class RssReaderApp extends ListActivity {
 			wifiConnected = false;
 			mobileConnected = false;
 		}
-		Log.d(APP_TAG, getResources().getString(R.string.via_wifi)
+		Log.d(applicationTag, getResources().getString(R.string.via_wifi)
 				+ wifiConnected);
-		Log.d(APP_TAG, getResources().getString(R.string.via_mobile)
+		Log.d(applicationTag, getResources().getString(R.string.via_mobile)
 				+ mobileConnected);
 
 	}
 
-	// Uses AsyncTask subclass to download the XML feed from stackoverflow.com.
-	// This avoids UI lock up. To prevent network operations from
-	// causing a delay that results in a poor user experience, always perform
-	// network operations on a separate thread from the UI.
+	/**
+	 * Uses AsyncTask subclass to download the XML feed from stackoverflow.com
+	 * This avoids UI lock up. To prevent network operations from causing a
+	 * delay that results in a poor user experience, always perform network
+	 * operations on a separate thread from the UI.
+	 */
 	private void loadRss() {
 		if (((getsPref().equals(ANY)) && (wifiConnected || mobileConnected))
 				|| ((getsPref().equals(WIFI)) && (wifiConnected))) {
@@ -186,7 +203,12 @@ public class RssReaderApp extends ListActivity {
 		}
 	}
 
-	// Populates the activity's options menu.
+	/**
+	 * Populates the activity's options menu.
+	 * 
+	 * @param menu
+	 * @return
+	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
@@ -194,7 +216,12 @@ public class RssReaderApp extends ListActivity {
 		return true;
 	}
 
-	// Handles the user's menu selection.
+	/**
+	 * Handles the user's menu selection.
+	 * 
+	 * @param item
+	 * @return
+	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -211,8 +238,8 @@ public class RssReaderApp extends ListActivity {
 		}
 	}
 
-	/*
-	 * returns the preferences of the app instance
+	/**
+	 * Returns the preferences of the app instance
 	 */
 	public static String getsPref() {
 		return sPref;
@@ -229,13 +256,13 @@ public class RssReaderApp extends ListActivity {
 	public static void setRefreshDisplay(boolean refreshDisplay) {
 		RssReaderApp.refreshDisplay = refreshDisplay;
 	}
-
+	
 	/**
 	 * Implementation of AsyncTask used to download XML feed from
 	 * stackoverflow.com
 	 */
 	private class DownloadXmlTask extends AsyncTask<String, Void, List<Entry>> {
-		private static final String DEBUG_TAG = "DownloadXmlTask";
+	    private String downloadTaskTag = this.getClass().getSimpleName();
 
 		@Override
 		protected List<Entry> doInBackground(String... urls) {
@@ -250,16 +277,24 @@ public class RssReaderApp extends ListActivity {
 			}
 		}
 
+		/**
+		 * Returns the exception as a entry list element to display it
+		 */
 		private List<Entry> exceptionAsEntryList(Exception e,
 				String exceptionMessage) {
 			Entry entryException = new Entry();
 			entryException.setTitle(exceptionMessage);
 			List<Entry> exceptionList = new ArrayList<Entry>();
 			exceptionList.add(entryException);
-			Log.e("DownloadXmlTask Exception", e.toString());
+			Log.e(downloadTaskTag, e.toString());
 			return exceptionList;
 		}
 
+		/**
+		 * Processes the List of entries from the background process into the
+		 * 
+		 * @param result List of Rss entries
+		 */
 		@Override
 		protected void onPostExecute(List<Entry> result) {
 
@@ -272,8 +307,15 @@ public class RssReaderApp extends ListActivity {
 
 		}
 
-		// Uploads XML from stackoverflow.com, parses it, and combines it with
-		// HTML markup. Returns HTML string.
+		/**
+		 * Uploads XML from stackoverflow.com, parses it, and combines it with
+		 * HTML markup. Returns HTML string.
+		 * 
+		 * @param urlString
+		 * @return
+		 * @throws XmlPullParserException
+		 * @throws IOException
+		 */
 		private List<Entry> loadXmlFromNetwork(String urlString)
 				throws XmlPullParserException, IOException {
 			InputStream stream = null;
@@ -282,23 +324,31 @@ public class RssReaderApp extends ListActivity {
 			try {
 				stream = downloadUrl(urlString);
 				entries = newscombinatorXmlParser.parse(stream);
-				Log.d(DEBUG_TAG, getResources().getString(R.string.stream_closed_debug));
-				// Makes sure that the InputStream is closed after the app is
-				// finished using it.
+				Log.d(downloadTaskTag,
+						getResources().getString(R.string.stream_closed_debug));
+				/*
+				 * Makes sure that the InputStream is closed after the app is
+				 * finished using it.
+				 */
 			} finally {
 				if (stream != null) {
 					stream.close();
-					Log.d(DEBUG_TAG, getResources().getString(R.string.stream_closed));
+					Log.d(downloadTaskTag,
+							getResources().getString(R.string.stream_closed));
 				}
 			}
-
 			return entries;
 		}
 
-		// Given a string representation of a URL, sets up a connection and gets
-		// an input stream.
-		// Data for the user into the content from the transaction
-		// Content for the content into the
+		/**
+		 * Given a string representation of a URL, sets up a connection and gets
+		 * an input stream. Data for the user into the content from the
+		 * transaction content for the content into the
+		 * 
+		 * @param urlString
+		 * @return
+		 * @throws IOException
+		 */
 		private InputStream downloadUrl(String urlString) throws IOException {
 			URL url = new URL(urlString);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -308,16 +358,20 @@ public class RssReaderApp extends ListActivity {
 			conn.setDoInput(true);
 			// Starts the query
 			conn.connect();
-			Log.d(DEBUG_TAG, getResources().getString(R.string.query_started));
+			Log.d(downloadTaskTag, getResources().getString(R.string.query_started));
 			return conn.getInputStream();
 		}
 
 	}
 
+	/**
+	 * Constructs the TextView from the Rss entry elements
+	 */
 	private class ListAdapter extends ArrayAdapter<Entry> {
 		private List<Entry> items;
 		private int[] colors = new int[] { Color.BLACK, Color.DKGRAY };
 		private int[] textColors = new int[] { Color.GRAY, Color.LTGRAY };
+		private String listAdapterTag;
 
 		public ListAdapter(Context context, int textViewResourceId,
 				List<Entry> items) {
@@ -325,6 +379,13 @@ public class RssReaderApp extends ListActivity {
 			this.items = items;
 		}
 
+		/**
+		 * (non-Javadoc)
+		 * 
+		 * @see android.widget.ArrayAdapter#getView(int, android.view.View,
+		 * android.view.ViewGroup)
+		 */
+		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View v = convertView;
 			if (v == null) {
@@ -336,15 +397,17 @@ public class RssReaderApp extends ListActivity {
 				TextView tView = (TextView) v.findViewById(R.id.rss_entry_row);
 				tView.setMovementMethod(ScrollingMovementMethod.getInstance());
 				if (tView != null) {
+					listAdapterTag = this.getClass().getSimpleName();
 					// Setting the title of the TextView
 					tView.setText(item.getTitle());
-					// Setting the link on clickable item
+					// Setting the URL link on clickable item
 					tView.setOnClickListener(new OnClickListener() {
-
 						@Override
 						public void onClick(View v) {
-							Log.d(LISTENER_TAG, getResources().getString(R.string.url_detail)
-									+ item.getLink().toString());
+							Log.d(listAdapterTag,
+									getResources().getString(
+											R.string.url_detail)
+											+ item.getLink().toString());
 							try {
 								// Start the activity
 								Intent i = new Intent(Intent.ACTION_VIEW);
@@ -352,21 +415,21 @@ public class RssReaderApp extends ListActivity {
 								startActivity(i);
 							} catch (ActivityNotFoundException e) {
 								// Raise on activity not found
-								Toast.makeText(RssReaderApp.this,
-										getResources().getString(R.string.browser_not_found),
-										Toast.LENGTH_SHORT);
-								Log.e(LISTENER_TAG, e.toString());
+								Toast.makeText(
+										RssReaderApp.this,
+										getResources().getString(
+												R.string.browser_not_found),
+										Toast.LENGTH_SHORT).show();
+								Log.e(listAdapterTag, e.toString());
 							}
 						}
 					});
-					//Alternate Row Color
+					// Alternate Row Color
 					int colorPos = position % colors.length;
 					tView.setBackgroundColor(colors[colorPos]);
 					tView.setTextColor(textColors[colorPos]);
 				}
-
 			}
-
 			return v;
 		}
 	}

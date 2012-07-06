@@ -36,6 +36,8 @@ public final class R {
         public static final int connection_error=0x7f070007;
         public static final int loading_message=0x7f070008;
         public static final int lost_connection=0x7f070005;
+        public static final int other_conn=0x7f070013;
+        public static final int other_conn_no_refresh=0x7f070014;
         /**  Application 
          */
         public static final int page_title=0x7f070003;
@@ -51,6 +53,9 @@ public final class R {
         public static final int url_detail=0x7f070011;
         public static final int via_mobile=0x7f07000b;
         public static final int via_wifi=0x7f07000a;
+        /**  Receiver 
+         */
+        public static final int wifi_conn=0x7f070012;
         public static final int wifi_connected=0x7f070006;
         public static final int xml_error=0x7f070009;
     }
