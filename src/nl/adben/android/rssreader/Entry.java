@@ -8,6 +8,7 @@ import java.util.Date;
 
 /**
  * Encapsulates the RSS entry object
+ * 
  * @author Adolfo Benedetti
  */
 public class Entry implements Comparable<Entry> {

@@ -70,7 +70,6 @@ import android.widget.Toast;
 public class RssReaderApp extends ListActivity {
 	public static final String WIFI = "Wi-Fi";
 	public static final String ANY = "Any";
-	private static final String URL = "http://news.ycombinator.com/rss";
 	/*
 	 * Whether there is a Wi-Fi connection.
 	 */
@@ -87,6 +86,10 @@ public class RssReaderApp extends ListActivity {
 	 * The user's current network preference setting.
 	 */
 	private static String sPref = null;
+	/*
+	 * The user's current feed
+	 */
+	private static String sUrl = null;
 	/*
 	 * The BroadcastReceiver that tracks network connectivity changes.
 	 */
@@ -125,6 +128,7 @@ public class RssReaderApp extends ListActivity {
 		 * the default value to use if a preference value is not found.
 		 */
 		setsPref(sharedPrefs.getString("listPref", WIFI));
+		setsUrl(sharedPrefs.getString("listUrlPref", "newsycombinator"));
 
 		updateConnectionStatus();
 
@@ -195,7 +199,8 @@ public class RssReaderApp extends ListActivity {
 		if (((getsPref().equals(ANY)) && (wifiConnected || mobileConnected))
 				|| ((getsPref().equals(WIFI)) && (wifiConnected))) {
 			// AsyncTask subclass
-			new DownloadXmlTask().execute(URL);
+			Log.d(applicationTag, getResources().getString(R.string.url_detail) + getsUrl());
+			new DownloadXmlTask().execute(getsUrl());
 		} else {
 			Toast.makeText(RssReaderApp.this,
 					getResources().getString(R.string.connection_error),
@@ -238,6 +243,7 @@ public class RssReaderApp extends ListActivity {
 		}
 	}
 
+	
 	/**
 	 * Returns the preferences of the app instance
 	 */
@@ -256,6 +262,15 @@ public class RssReaderApp extends ListActivity {
 	public static void setRefreshDisplay(boolean refreshDisplay) {
 		RssReaderApp.refreshDisplay = refreshDisplay;
 	}
+	
+	public static String getsUrl() {
+		return sUrl;
+	}
+
+	public static void setsUrl(String sUrl) {
+		RssReaderApp.sUrl = sUrl;
+	}
+
 	
 	/**
 	 * Implementation of AsyncTask used to download XML feed from
@@ -433,5 +448,4 @@ public class RssReaderApp extends ListActivity {
 			return v;
 		}
 	}
-
 }

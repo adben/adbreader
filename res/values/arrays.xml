@@ -25,4 +25,12 @@
         <item>Wi-Fi</item>
         <item>Any</item>
     </string-array>
+        <string-array name="listUrlArray">
+        <item>newsycombinator</item>
+        <item>tweakers</item>
+    </string-array>
+    <string-array name="listUrlValues">
+        <item>http://news.ycombinator.com/rss</item>
+        <item>http://feeds.feedburner.com/tweakers/mixed</item>
+    </string-array>
 </resources>

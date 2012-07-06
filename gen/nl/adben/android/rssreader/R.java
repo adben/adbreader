@@ -10,6 +10,8 @@ package nl.adben.android.rssreader;
 public final class R {
     public static final class array {
         public static final int listArray=0x7f050000;
+        public static final int listUrlArray=0x7f050002;
+        public static final int listUrlValues=0x7f050003;
         public static final int listValues=0x7f050001;
     }
     public static final class attr {

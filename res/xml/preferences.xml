@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <!--
   Copyright (C) 2012 The Android Open Source Project
 
@@ -14,20 +13,37 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-  -->
+-->
 
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <ListPreference
-        android:title="Download Feed"
-        android:summary="Network connectivity required to download the feed."
-        android:key="listPref"
-        android:defaultValue="Wi-Fi"
-        android:entries="@array/listArray"
-        android:entryValues="@array/listValues"
-     />
-    <CheckBoxPreference
-        android:title="Show Summaries"
-        android:defaultValue="false"
-        android:summary="Show a summary for each link."
-        android:key="summaryPref" />
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:title="Conectivity" >
+        <ListPreference
+            android:defaultValue="Wi-Fi"
+            android:entries="@array/listArray"
+            android:entryValues="@array/listValues"
+            android:key="listPref"
+            android:summary="Network connectivity required to download the feed."
+            android:title="Download Feed" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:title="Feed" >
+        <ListPreference
+            android:defaultValue="newsycombinator"
+            android:entries="@array/listUrlArray"
+            android:entryValues="@array/listUrlValues"
+            android:key="listUrlPref"
+            android:summary="The RSS feed to consume"
+            android:title="Feed Selector" />
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="summaryPref"
+            android:summary="Show a summary for each link."
+            android:title="Show Summaries" />
+    </PreferenceCategory>
+
 </PreferenceScreen>
