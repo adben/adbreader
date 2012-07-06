@@ -51,8 +51,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
-
 /**
  * Main Activity for the Rss Reader application.
  * <p/>
@@ -431,8 +429,13 @@ public class RssReaderApp extends ListActivity {
                 tView.setMovementMethod(ScrollingMovementMethod.getInstance());
                 if (tView != null) {
                     listAdapterTag = this.getClass().getSimpleName();
-
-                    tView.setText(Html.fromHtml(editedText(item.getTitle(), item.getDescription())));
+                    String feedItemContent;
+                    if (!RssReaderApp.isWithDescription()) {
+                        feedItemContent = parseContent(item.getTitle());
+                    } else {
+                        feedItemContent = parseContent(item.getTitle(), item.getDescription());
+                    }
+                    tView.setText(Html.fromHtml(feedItemContent));
                     // Setting the URL link on clickable item
                     tView.setOnClickListener(new OnClickListener() {
                         @Override
@@ -467,21 +470,38 @@ public class RssReaderApp extends ListActivity {
             return v;
         }
 
-        private String editedText(String title, String description) {
+        /**
+         * Create html-like content for the TextView
+         *
+         * @param title Feed title
+         * @return
+         */
+        private String parseContent(String title) {
             StringBuffer sb = new StringBuffer();
-// Setting the title of the TextView
-            // Checks whether the user set the preference to include summary text
+            // Setting the title of the TextView
             sb.append("<b>");
             sb.append(title);
             sb.append("</b>");
-            if (RssReaderApp.isWithDescription()) {
-                sb.append("<br>");
-                sb.append("<small>");
-                //removing html
-                sb.append(Html.fromHtml(description));
-                sb.append("</small>");
-            }
             return sb.toString();
         }
+
+        /**
+         * Create html-like content for the TextView
+         *
+         * @param title       Feed title
+         * @param description descriptionor summary of the feed
+         * @return
+         */
+        private String parseContent(String title, String description) {
+            StringBuffer sb = new StringBuffer();
+            sb.append(parseContent(title));
+            sb.append("<br>");
+            sb.append("<small>");
+            //removing html
+            sb.append(Html.fromHtml(description));
+            sb.append("</small>");
+            return sb.toString();
+        }
+
     }
 }
