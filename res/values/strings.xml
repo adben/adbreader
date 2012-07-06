@@ -18,7 +18,7 @@
 
 <resources>
 
-    <string name="app_name">NetworkUsage</string>
+    <string name="app_name">Hacker Breakfast</string>
 
     <!--  Menu items -->
     <string name="settings">Settings</string>

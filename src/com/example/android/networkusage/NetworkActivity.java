@@ -15,17 +15,16 @@
 package com.example.android.networkusage;
 
 import android.app.ListActivity;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
+import android.content.*;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.*;
+import android.view.View.OnClickListener;
 import android.webkit.WebView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -56,282 +55,307 @@ import java.util.List;
  * whether to refresh the WebView content.
  */
 public class NetworkActivity extends ListActivity {
-    public static final String WIFI = "Wi-Fi";
-    public static final String ANY = "Any";
-    private static final String URL = "http://news.ycombinator.com/rss";
-    private static final String DEBUG_TAG = "NetworkActivity debug ";
+	public static final String WIFI = "Wi-Fi";
+	public static final String ANY = "Any";
+	private static final String URL = "http://news.ycombinator.com/rss";
+	private static final String DEBUG_TAG = "NetworkActivity debug";
 
-    // Whether there is a Wi-Fi connection.
-    private static boolean wifiConnected = false;
-    // Whether there is a mobile connection.
-    private static boolean mobileConnected = false;
-    // Whether the display should be refreshed.
-    private static boolean refreshDisplay = true;
-    // The user's current network preference setting.
-    private static String sPref = null;
-    // The BroadcastReceiver that tracks network connectivity changes.
-    private NetworkReceiver receiver = new NetworkReceiver();
+	// Whether there is a Wi-Fi connection.
+	private static boolean wifiConnected = false;
+	// Whether there is a mobile connection.
+	private static boolean mobileConnected = false;
+	// Whether the display should be refreshed.
+	private static boolean refreshDisplay = true;
+	// The user's current network preference setting.
+	private static String sPref = null;
+	// The BroadcastReceiver that tracks network connectivity changes.
+	private NetworkReceiver receiver = new NetworkReceiver();
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 
-        // Register BroadcastReceiver to track connection changes.
-        IntentFilter filter = new IntentFilter(
-                ConnectivityManager.CONNECTIVITY_ACTION);
-        receiver = new NetworkReceiver();
-        this.registerReceiver(receiver, filter);
-    }
+		// Register BroadcastReceiver to track connection changes.
+		IntentFilter filter = new IntentFilter(
+				ConnectivityManager.CONNECTIVITY_ACTION);
+		receiver = new NetworkReceiver();
+		this.registerReceiver(receiver, filter);
+	}
 
-    // Refreshes the display if the network connection and the
-    // pref settings allow it.
-    @Override
-    public void onStart() {
-        super.onStart();
+	// Refreshes the display if the network connection and the
+	// pref settings allow it.
+	@Override
+	public void onStart() {
+		super.onStart();
 
-        // Gets the user's network preference settings
-        SharedPreferences sharedPrefs = PreferenceManager
-                .getDefaultSharedPreferences(this);
+		// Gets the user's network preference settings
+		SharedPreferences sharedPrefs = PreferenceManager
+				.getDefaultSharedPreferences(this);
 
-        // Retrieves a string value for the preferences. The second parameter
-        // is the default value to use if a preference value is not found.
-        setsPref(sharedPrefs.getString("listPref", "Wi-Fi"));
+		// Retrieves a string value for the preferences. The second parameter
+		// is the default value to use if a preference value is not found.
+		setsPref(sharedPrefs.getString("listPref", "Wi-Fi"));
 
-        updateConnectionStatus();
+		updateConnectionStatus();
 
-        // Only loads the page if refreshDisplay is true. Otherwise, keeps
-        // previous
-        // display. For example, if the user has set "Wi-Fi only" in prefs and
-        // the
-        // device loses its Wi-Fi connection midway through the user using the
-        // app,
-        // you don't want to refresh the display--this would force the display
-        // of
-        // an error page instead of newsycombinator.com content.
-        if (isRefreshDisplay()) {
-            loadRss();
-        }
-    }
+		// Only loads the page if refreshDisplay is true. Otherwise, keeps
+		// previous
+		// display. For example, if the user has set "Wi-Fi only" in prefs and
+		// the
+		// device loses its Wi-Fi connection midway through the user using the
+		// app,
+		// you don't want to refresh the display--this would force the display
+		// of
+		// an error page instead of newsycombinator.com content.
+		if (isRefreshDisplay()) {
+			loadRss();
+		}
+	}
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (receiver != null) {
-            this.unregisterReceiver(receiver);
-        }
-    }
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		if (receiver != null) {
+			this.unregisterReceiver(receiver);
+		}
+	}
 
-    @Override
-    protected void onListItemClick(ListView l, View v, int position, long id) {
-        super.onListItemClick(l, v, position, id);
-    }
+	@Override
+	protected void onListItemClick(ListView l, View v, int position, long id) {
+		super.onListItemClick(l, v, position, id);
+		Log.d(DEBUG_TAG, "Selected Item: " + id);
 
-    @Override
-    public boolean onMenuItemSelected(int featureId, MenuItem item) {
-        super.onMenuItemSelected(featureId, item);
-        this.loadRss();
-        return true;
-    }
+	}
 
-    /*
-      * Checks the network connection and sets the wifiConnected and
-      * mobileConnected variables accordingly
-      */
-    private void updateConnectionStatus() {
-        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeInfo = connMgr.getActiveNetworkInfo();
-        if (activeInfo != null && activeInfo.isConnected()) {
-            // the connectivity with wifi was established
-            wifiConnected = activeInfo.getType() == ConnectivityManager.TYPE_WIFI;
-            mobileConnected = activeInfo.getType() == ConnectivityManager.TYPE_MOBILE;
-        } else {
-            // connectivity of the device is false
-            wifiConnected = false;
-            mobileConnected = false;
-        }
-        Log.d(DEBUG_TAG, "Wifi connected: " + wifiConnected);
-        Log.d(DEBUG_TAG, "Mobile connected: " + mobileConnected);
+	@Override
+	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+		super.onMenuItemSelected(featureId, item);
+		this.loadRss();
+		return true;
+	}
 
-    }
+	/*
+	 * Checks the network connection and sets the wifiConnected and
+	 * mobileConnected variables accordingly
+	 */
+	private void updateConnectionStatus() {
+		ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo activeInfo = connMgr.getActiveNetworkInfo();
+		if (activeInfo != null && activeInfo.isConnected()) {
+			// the connectivity with wifi was established
+			wifiConnected = activeInfo.getType() == ConnectivityManager.TYPE_WIFI;
+			mobileConnected = activeInfo.getType() == ConnectivityManager.TYPE_MOBILE;
+		} else {
+			// connectivity of the device is false
+			wifiConnected = false;
+			mobileConnected = false;
+		}
+		Log.d(DEBUG_TAG, "Wifi connected: " + wifiConnected);
+		Log.d(DEBUG_TAG, "Mobile connected: " + mobileConnected);
 
-    // Uses AsyncTask subclass to download the XML feed from stackoverflow.com.
-    // This avoids UI lock up. To prevent network operations from
-    // causing a delay that results in a poor user experience, always perform
-    // network operations on a separate thread from the UI.
-    private void loadRss() {
-        if (((getsPref().equals(ANY)) && (wifiConnected || mobileConnected))
-                || ((getsPref().equals(WIFI)) && (wifiConnected))) {
-            // AsyncTask subclass
-            new DownloadXmlTask().execute(URL);
-        } else {
-            showErrorPage();
-        }
-    }
+	}
 
-    // Displays an error if the app is unable to load content.
-    private void showErrorPage() {
-        setContentView(R.layout.main);
+	// Uses AsyncTask subclass to download the XML feed from stackoverflow.com.
+	// This avoids UI lock up. To prevent network operations from
+	// causing a delay that results in a poor user experience, always perform
+	// network operations on a separate thread from the UI.
+	private void loadRss() {
+		if (((getsPref().equals(ANY)) && (wifiConnected || mobileConnected))
+				|| ((getsPref().equals(WIFI)) && (wifiConnected))) {
+			// AsyncTask subclass
+			new DownloadXmlTask().execute(URL);
+		} else {
+			showErrorPage();
+		}
+	}
 
-        // The specified network connection is not available. Displays error
-        // message.
-        WebView myWebView = (WebView) findViewById(R.id.webview);
-        myWebView.loadData(getResources().getString(R.string.connection_error),
-                "text/html", null);
-    }
+	// Displays an error if the app is unable to load content.
+	private void showErrorPage() {
+		setContentView(R.layout.main);
 
-    // Populates the activity's options menu.
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.mainmenu, menu);
-        return true;
-    }
+		// The specified network connection is not available. Displays error
+		// message.
+		WebView myWebView = (WebView) findViewById(R.id.webview);
+		myWebView.loadData(getResources().getString(R.string.connection_error),
+				"text/html", null);
+	}
 
-    // Handles the user's menu selection.
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.settings:
-                Intent settingsActivity = new Intent(getBaseContext(),
-                        SettingsActivity.class);
-                startActivity(settingsActivity);
-                return true;
-            case R.id.refresh:
-                loadRss();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
+	// Populates the activity's options menu.
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.mainmenu, menu);
+		return true;
+	}
 
-    /*
-      * returns the preferences of the app instance
-      */
-    public static String getsPref() {
-        return sPref;
-    }
+	// Handles the user's menu selection.
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.settings:
+			Intent settingsActivity = new Intent(getBaseContext(),
+					SettingsActivity.class);
+			startActivity(settingsActivity);
+			return true;
+		case R.id.refresh:
+			loadRss();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
 
-    public static void setsPref(String sPref) {
-        NetworkActivity.sPref = sPref;
-    }
+	/*
+	 * returns the preferences of the app instance
+	 */
+	public static String getsPref() {
+		return sPref;
+	}
 
-    public static boolean isRefreshDisplay() {
-        return refreshDisplay;
-    }
+	public static void setsPref(String sPref) {
+		NetworkActivity.sPref = sPref;
+	}
 
-    public static void setRefreshDisplay(boolean refreshDisplay) {
-        NetworkActivity.refreshDisplay = refreshDisplay;
-    }
+	public static boolean isRefreshDisplay() {
+		return refreshDisplay;
+	}
 
-    /**
-     * Implementation of AsyncTask used to download XML feed from
-     * stackoverflow.com
-     */
-    private class DownloadXmlTask extends AsyncTask<String, Void, List<Entry>> {
-        private static final String DEBUG_TAG = "DownloadXmlTask";
+	public static void setRefreshDisplay(boolean refreshDisplay) {
+		NetworkActivity.refreshDisplay = refreshDisplay;
+	}
 
-        @Override
-        protected List<Entry> doInBackground(String... urls) {
-            try {
-                return loadXmlFromNetwork(urls[0]);
-            } catch (IOException e) {
-                return exceptionAsEntryList(e,
-                        getResources().getString(R.string.connection_error));
-            } catch (XmlPullParserException e) {
-                return exceptionAsEntryList(e,
-                        getResources().getString(R.string.xml_error));
-            }
-        }
+	/**
+	 * Implementation of AsyncTask used to download XML feed from
+	 * stackoverflow.com
+	 */
+	private class DownloadXmlTask extends AsyncTask<String, Void, List<Entry>> {
+		private static final String DEBUG_TAG = "DownloadXmlTask";
 
-        private List<Entry> exceptionAsEntryList(Exception e,
-                                                 String exceptionMessage) {
-            Entry entryException = new Entry();
-            entryException.setTitle(exceptionMessage);
-            List<Entry> exceptionList = new ArrayList<Entry>();
-            exceptionList.add(entryException);
-            Log.e("DownloadXmlTask Exception", e.toString());
-            return exceptionList;
-        }
+		@Override
+		protected List<Entry> doInBackground(String... urls) {
+			try {
+				return loadXmlFromNetwork(urls[0]);
+			} catch (IOException e) {
+				return exceptionAsEntryList(e,
+						getResources().getString(R.string.connection_error));
+			} catch (XmlPullParserException e) {
+				return exceptionAsEntryList(e,
+						getResources().getString(R.string.xml_error));
+			}
+		}
 
-        @Override
-        protected void onPostExecute(List<Entry> result) {
+		private List<Entry> exceptionAsEntryList(Exception e,
+				String exceptionMessage) {
+			Entry entryException = new Entry();
+			entryException.setTitle(exceptionMessage);
+			List<Entry> exceptionList = new ArrayList<Entry>();
+			exceptionList.add(entryException);
+			Log.e("DownloadXmlTask Exception", e.toString());
+			return exceptionList;
+		}
 
-            setListAdapter(new ListAdapter(NetworkActivity.this, R.layout.row,
-                    result));
+		@Override
+		protected void onPostExecute(List<Entry> result) {
 
-            Toast.makeText(NetworkActivity.this, "Please wait\n: Loading Rss feeds",
-                    Toast.LENGTH_SHORT).show();
+			setListAdapter(new ListAdapter(NetworkActivity.this, R.layout.row,
+					result));
 
-        }
+			Toast.makeText(NetworkActivity.this,
+					"Please wait\n: Loading Rss feeds", Toast.LENGTH_SHORT)
+					.show();
 
-        // Uploads XML from stackoverflow.com, parses it, and combines it with
-        // HTML markup. Returns HTML string.
-        private List<Entry> loadXmlFromNetwork(String urlString)
-                throws XmlPullParserException, IOException {
-            InputStream stream = null;
-            RssXmlPullParser newscombinatorXmlParser = new RssXmlPullParser();
-            List<Entry> entries = null;
-            try {
-                stream = downloadUrl(urlString);
-                entries = newscombinatorXmlParser.parse(stream);
-                Log.d(DEBUG_TAG,
-                        "InputStream to closed : needed after the app is finished using it");
-                // Makes sure that the InputStream is closed after the app is
-                // finished using it.
-            } finally {
-                if (stream != null) {
-                    stream.close();
-                    Log.d(DEBUG_TAG, "InputStream is now closed!");
-                }
-            }
+		}
 
-            return entries;
-        }
+		// Uploads XML from stackoverflow.com, parses it, and combines it with
+		// HTML markup. Returns HTML string.
+		private List<Entry> loadXmlFromNetwork(String urlString)
+				throws XmlPullParserException, IOException {
+			InputStream stream = null;
+			RssXmlPullParser newscombinatorXmlParser = new RssXmlPullParser();
+			List<Entry> entries = null;
+			try {
+				stream = downloadUrl(urlString);
+				entries = newscombinatorXmlParser.parse(stream);
+				Log.d(DEBUG_TAG,
+						"InputStream to closed : needed after the app is finished using it");
+				// Makes sure that the InputStream is closed after the app is
+				// finished using it.
+			} finally {
+				if (stream != null) {
+					stream.close();
+					Log.d(DEBUG_TAG, "InputStream is now closed!");
+				}
+			}
 
-        // Given a string representation of a URL, sets up a connection and gets
-        // an input stream.
-        // Data for the user into the content from the transaction
-        // Content for the content into the
-        private InputStream downloadUrl(String urlString) throws IOException {
-            URL url = new URL(urlString);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(10000 /* milliseconds */);
-            conn.setConnectTimeout(15000 /* milliseconds */);
-            conn.setRequestMethod("GET");
-            conn.setDoInput(true);
-            // Starts the query
-            conn.connect();
-            Log.d(DEBUG_TAG, "Starts the query");
-            return conn.getInputStream();
-        }
+			return entries;
+		}
 
-    }
+		// Given a string representation of a URL, sets up a connection and gets
+		// an input stream.
+		// Data for the user into the content from the transaction
+		// Content for the content into the
+		private InputStream downloadUrl(String urlString) throws IOException {
+			URL url = new URL(urlString);
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setReadTimeout(10000 /* milliseconds */);
+			conn.setConnectTimeout(15000 /* milliseconds */);
+			conn.setRequestMethod("GET");
+			conn.setDoInput(true);
+			// Starts the query
+			conn.connect();
+			Log.d(DEBUG_TAG, "Starts the query");
+			return conn.getInputStream();
+		}
 
-    private class ListAdapter extends ArrayAdapter<Entry> {
-        private List<Entry> items;
+	}
 
-        public ListAdapter(Context context, int textViewResourceId,
-                           List<Entry> items) {
-            super(context, textViewResourceId, items);
-            this.items = items;
-        }
+	private class ListAdapter extends ArrayAdapter<Entry> {
+		private List<Entry> items;
 
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View v = convertView;
-            if (v == null) {
-                LayoutInflater vi = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                v = vi.inflate(R.layout.row, null);
-            }
-            Entry item = items.get(position);
-            if (item != null) {
-                TextView title = (TextView) v.findViewById(R.id.rss_entry_row);
+		public ListAdapter(Context context, int textViewResourceId,
+				List<Entry> items) {
+			super(context, textViewResourceId, items);
+			this.items = items;
+		}
 
-                if (title != null) {
-                    title.setText(item.getTitle());
-                }
-            }
-            return v;
-        }
-    }
+		public View getView(int position, View convertView, ViewGroup parent) {
+			View v = convertView;
+			if (v == null) {
+				LayoutInflater vi = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				v = vi.inflate(R.layout.row, null);
+			}
+			final Entry item = items.get(position);
+			if (item != null) {
+				TextView tView = (TextView) v.findViewById(R.id.rss_entry_row);
+				final Intent i = new Intent(Intent.ACTION_VIEW);
+				final Uri u = Uri.parse(item.getLink().toString());
+				final Context context = NetworkActivity.this;
+				if (tView != null) {
+					// Setting the title of the TextView
+					tView.setText(item.getTitle());
+					// Setting the link on clickable item
+					tView.setOnClickListener(new OnClickListener() {
+
+						@Override
+						public void onClick(View v) {
+
+							Log.d("TextViewListener", "Requested url"
+									+ item.getLink().toString());
+							try {
+								// Start the activity
+								i.setData(u);
+								startActivity(i);
+							} catch (ActivityNotFoundException e) {
+								// Raise on activity not found
+								Toast.makeText(context, "Browser not found.",
+										Toast.LENGTH_SHORT);
+							}
+						}
+					});
+				}
+			}
+			return v;
+		}
+	}
 
 }
