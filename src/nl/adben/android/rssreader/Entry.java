@@ -1,4 +1,4 @@
-package com.example.android.networkusage;
+package nl.adben.android.rssreader;
 
 import java.net.MalformedURLException;
 import java.net.URL;

@@ -12,25 +12,7 @@
  * the License.
  */
 
-package com.example.android.networkusage;
-
-import android.app.ListActivity;
-import android.content.*;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.util.Log;
-import android.view.*;
-import android.view.View.OnClickListener;
-import android.webkit.WebView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
-import org.xmlpull.v1.XmlPullParserException;
+package nl.adben.android.rssreader;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,6 +20,35 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.xmlpull.v1.XmlPullParserException;
+
+import android.app.ListActivity;
+import android.content.ActivityNotFoundException;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Main Activity for the sample application.
@@ -54,11 +65,13 @@ import java.util.List;
  * o Monitors preferences and the device's network connection to determine
  * whether to refresh the WebView content.
  */
-public class NetworkActivity extends ListActivity {
+public class RssReaderApp extends ListActivity {
 	public static final String WIFI = "Wi-Fi";
 	public static final String ANY = "Any";
 	private static final String URL = "http://news.ycombinator.com/rss";
-	private static final String DEBUG_TAG = "NetworkActivity debug";
+	private static final String APP_TAG = "NetworkActivity debug";
+	private static final String LISTENER_TAG = "TextViewListener";
+
 
 	// Whether there is a Wi-Fi connection.
 	private static boolean wifiConnected = false;
@@ -123,7 +136,7 @@ public class NetworkActivity extends ListActivity {
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
-		Log.d(DEBUG_TAG, "Selected Item: " + id);
+		Log.d(APP_TAG, getResources().getString(R.string.selected_item) + id);
 
 	}
 
@@ -150,8 +163,10 @@ public class NetworkActivity extends ListActivity {
 			wifiConnected = false;
 			mobileConnected = false;
 		}
-		Log.d(DEBUG_TAG, "Wifi connected: " + wifiConnected);
-		Log.d(DEBUG_TAG, "Mobile connected: " + mobileConnected);
+		Log.d(APP_TAG, getResources().getString(R.string.via_wifi)
+				+ wifiConnected);
+		Log.d(APP_TAG, getResources().getString(R.string.via_mobile)
+				+ mobileConnected);
 
 	}
 
@@ -165,19 +180,10 @@ public class NetworkActivity extends ListActivity {
 			// AsyncTask subclass
 			new DownloadXmlTask().execute(URL);
 		} else {
-			showErrorPage();
+			Toast.makeText(RssReaderApp.this,
+					getResources().getString(R.string.connection_error),
+					Toast.LENGTH_LONG).show();
 		}
-	}
-
-	// Displays an error if the app is unable to load content.
-	private void showErrorPage() {
-		setContentView(R.layout.main);
-
-		// The specified network connection is not available. Displays error
-		// message.
-		WebView myWebView = (WebView) findViewById(R.id.webview);
-		myWebView.loadData(getResources().getString(R.string.connection_error),
-				"text/html", null);
 	}
 
 	// Populates the activity's options menu.
@@ -213,7 +219,7 @@ public class NetworkActivity extends ListActivity {
 	}
 
 	public static void setsPref(String sPref) {
-		NetworkActivity.sPref = sPref;
+		RssReaderApp.sPref = sPref;
 	}
 
 	public static boolean isRefreshDisplay() {
@@ -221,7 +227,7 @@ public class NetworkActivity extends ListActivity {
 	}
 
 	public static void setRefreshDisplay(boolean refreshDisplay) {
-		NetworkActivity.refreshDisplay = refreshDisplay;
+		RssReaderApp.refreshDisplay = refreshDisplay;
 	}
 
 	/**
@@ -257,12 +263,12 @@ public class NetworkActivity extends ListActivity {
 		@Override
 		protected void onPostExecute(List<Entry> result) {
 
-			setListAdapter(new ListAdapter(NetworkActivity.this, R.layout.row,
+			setListAdapter(new ListAdapter(RssReaderApp.this, R.layout.row,
 					result));
 
-			Toast.makeText(NetworkActivity.this,
-					"Please wait\n: Loading Rss feeds", Toast.LENGTH_SHORT)
-					.show();
+			Toast.makeText(RssReaderApp.this,
+					getResources().getString(R.string.loading_message),
+					Toast.LENGTH_SHORT).show();
 
 		}
 
@@ -276,14 +282,13 @@ public class NetworkActivity extends ListActivity {
 			try {
 				stream = downloadUrl(urlString);
 				entries = newscombinatorXmlParser.parse(stream);
-				Log.d(DEBUG_TAG,
-						"InputStream to closed : needed after the app is finished using it");
+				Log.d(DEBUG_TAG, getResources().getString(R.string.stream_closed_debug));
 				// Makes sure that the InputStream is closed after the app is
 				// finished using it.
 			} finally {
 				if (stream != null) {
 					stream.close();
-					Log.d(DEBUG_TAG, "InputStream is now closed!");
+					Log.d(DEBUG_TAG, getResources().getString(R.string.stream_closed));
 				}
 			}
 
@@ -303,7 +308,7 @@ public class NetworkActivity extends ListActivity {
 			conn.setDoInput(true);
 			// Starts the query
 			conn.connect();
-			Log.d(DEBUG_TAG, "Starts the query");
+			Log.d(DEBUG_TAG, getResources().getString(R.string.query_started));
 			return conn.getInputStream();
 		}
 
@@ -311,6 +316,8 @@ public class NetworkActivity extends ListActivity {
 
 	private class ListAdapter extends ArrayAdapter<Entry> {
 		private List<Entry> items;
+		private int[] colors = new int[] { Color.BLACK, Color.DKGRAY };
+		private int[] textColors = new int[] { Color.GRAY, Color.LTGRAY };
 
 		public ListAdapter(Context context, int textViewResourceId,
 				List<Entry> items) {
@@ -327,9 +334,7 @@ public class NetworkActivity extends ListActivity {
 			final Entry item = items.get(position);
 			if (item != null) {
 				TextView tView = (TextView) v.findViewById(R.id.rss_entry_row);
-				final Intent i = new Intent(Intent.ACTION_VIEW);
-				final Uri u = Uri.parse(item.getLink().toString());
-				final Context context = NetworkActivity.this;
+				tView.setMovementMethod(ScrollingMovementMethod.getInstance());
 				if (tView != null) {
 					// Setting the title of the TextView
 					tView.setText(item.getTitle());
@@ -338,22 +343,30 @@ public class NetworkActivity extends ListActivity {
 
 						@Override
 						public void onClick(View v) {
-
-							Log.d("TextViewListener", "Requested url"
+							Log.d(LISTENER_TAG, getResources().getString(R.string.url_detail)
 									+ item.getLink().toString());
 							try {
 								// Start the activity
-								i.setData(u);
+								Intent i = new Intent(Intent.ACTION_VIEW);
+								i.setData(Uri.parse(item.getLink().toString()));
 								startActivity(i);
 							} catch (ActivityNotFoundException e) {
 								// Raise on activity not found
-								Toast.makeText(context, "Browser not found.",
+								Toast.makeText(RssReaderApp.this,
+										getResources().getString(R.string.browser_not_found),
 										Toast.LENGTH_SHORT);
+								Log.e(LISTENER_TAG, e.toString());
 							}
 						}
 					});
+					//Alternate Row Color
+					int colorPos = position % colors.length;
+					tView.setBackgroundColor(colors[colorPos]);
+					tView.setTextColor(textColors[colorPos]);
 				}
+
 			}
+
 			return v;
 		}
 	}

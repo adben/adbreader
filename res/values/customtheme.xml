@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="CustomTheme" parent="android:Theme">
+        <item name="android:windowTitleSize">20dip</item>
+        <item name="android:windowTitleStyle">@style/CustomWindowTitle</item>
+    </style>
+
+    <style name="CustomWindowTitle">
+        <item name="android:textAppearance">@style/CustomWindowTitleText</item>
+        <item name="android:shadowRadius">5</item>
+        <item name="android:gravity">center</item>
+        <item name="android:shadowColor">#1155CC</item>
+    </style>
+
+    <style name="CustomWindowTitleText" parent="android:TextAppearance.WindowTitle">
+        <item name="android:textSize">13dip</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+</resources>

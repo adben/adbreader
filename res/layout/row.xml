@@ -8,9 +8,8 @@
 
     <TextView
         android:id="@+id/rss_entry_row"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:clickable="true"
         android:textSize="11dip"
         android:textStyle="bold" 
         android:padding="3pt">

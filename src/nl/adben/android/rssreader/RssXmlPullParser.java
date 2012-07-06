@@ -1,4 +1,4 @@
-package com.example.android.networkusage;
+package nl.adben.android.rssreader;
 
 import java.io.InputStream;
 import java.util.ArrayList;
