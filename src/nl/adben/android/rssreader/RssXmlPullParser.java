@@ -45,7 +45,8 @@ public class RssXmlPullParser {
 					} else if (currentEntry != null) {
 						if (name.equalsIgnoreCase(LINK)) {
 							currentEntry.setLink(parser.nextText());
-						} else if (name.equalsIgnoreCase(DESCRIPTION)) {
+                            //saving time without processing description
+						} else if (name.equalsIgnoreCase(DESCRIPTION) && RssReaderApp.isWithDescription()) {
 							currentEntry.setDescription(parser.nextText());
 						} else if (name.equalsIgnoreCase(TITLE)) {
 							currentEntry.setTitle(parser.nextText());

@@ -28,9 +28,15 @@
         <string-array name="listUrlArray">
         <item>newsycombinator</item>
         <item>tweakers</item>
+        <item>boingboing</item>
+        <item>dzone</item>
+        <item>nederland</item>
     </string-array>
     <string-array name="listUrlValues">
         <item>http://news.ycombinator.com/rss</item>
         <item>http://feeds.feedburner.com/tweakers/mixed</item>
+        <item>http://boingboing.net/rss</item>
+        <item>http://feeds.dzone.com/dzone/frontpage?format=xml</item>
+        <item>http://fxfeeds.mozilla.com/nl/firefox/headlines.xml</item>
     </string-array>
 </resources>

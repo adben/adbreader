@@ -11,8 +11,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:textSize="11dip"
-        android:textStyle="bold" 
-        android:padding="3pt">
+        android:padding="2pt">
     </TextView>
 
 </LinearLayout>
