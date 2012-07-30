@@ -12,7 +12,8 @@
     <string name="lost_connection">Lost connection.</string>
     <string name="wifi_connected">Wi-Fi reconnected.</string>
     <string name="connection_error">Unable to load content. Check your network connection.</string>
-    <string name="loading_message">Loading Rss feeds</string>
+    <string name="loading_message">Loading Rss entries</string>
+    <string name="loaded_message">Loaded Rss entries</string>
     <string name="xml_error">Error parsing XML</string>
     <string name="via_wifi">Wifi connected: </string>
     <string name="via_mobile">Mobile connected: </string>

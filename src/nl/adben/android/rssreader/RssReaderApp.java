@@ -206,8 +206,12 @@ public class RssReaderApp extends ListActivity {
         if (((getsPref().equals(ANY)) && (wifiConnected || mobileConnected))
                 || ((getsPref().equals(WIFI)) && (wifiConnected))) {
             // AsyncTask subclass
+            Toast.makeText(RssReaderApp.this,
+                    getResources().getString(R.string.loading_message),
+                    Toast.LENGTH_LONG).show();
             Log.d(applicationTag, getResources().getString(R.string.url_detail) + getsUrl());
             new DownloadXmlTask().execute(getsUrl());
+
         } else {
             Toast.makeText(RssReaderApp.this,
                     getResources().getString(R.string.connection_error),
@@ -218,8 +222,8 @@ public class RssReaderApp extends ListActivity {
     /**
      * Populates the activity's options menu.
      *
-     * @param menu
-     * @return
+     * @param menu to populate
+     * @return state of the options menu
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -231,8 +235,8 @@ public class RssReaderApp extends ListActivity {
     /**
      * Handles the user's menu selection.
      *
-     * @param item
-     * @return
+     * @param item only used if the item is selected
+     * @return state of the selected option item
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -332,7 +336,7 @@ public class RssReaderApp extends ListActivity {
                     result));
 
             Toast.makeText(RssReaderApp.this,
-                    getResources().getString(R.string.loading_message),
+                    getResources().getString(R.string.loaded_message),
                     Toast.LENGTH_SHORT).show();
 
         }
@@ -341,19 +345,19 @@ public class RssReaderApp extends ListActivity {
          * Uploads XML from stackoverflow.com, parses it, and combines it with
          * HTML markup. Returns HTML string.
          *
-         * @param urlString
-         * @return
+         * @param urlString http'ed string to fectch the content
+         * @return parsed list of the Rss entries
          * @throws XmlPullParserException
          * @throws IOException
          */
         private List<Entry> loadXmlFromNetwork(String urlString)
                 throws XmlPullParserException, IOException {
             InputStream stream = null;
-            RssXmlPullParser newscombinatorXmlParser = new RssXmlPullParser();
+            RssXmlPullParser rssSource = new RssXmlPullParser();
             List<Entry> entries = null;
             try {
                 stream = downloadUrl(urlString);
-                entries = newscombinatorXmlParser.parse(stream);
+                entries = rssSource.parse(stream);
                 Log.d(downloadTaskTag,
                         getResources().getString(R.string.stream_closed_debug));
                 /*
@@ -375,8 +379,8 @@ public class RssReaderApp extends ListActivity {
          * an input stream. Data for the user into the content from the
          * transaction content for the content into the
          *
-         * @param urlString
-         * @return
+         * @param urlString url to connect
+         * @return Steam of the
          * @throws IOException
          */
         private InputStream downloadUrl(String urlString) throws IOException {
@@ -400,7 +404,7 @@ public class RssReaderApp extends ListActivity {
     private class ListAdapter extends ArrayAdapter<Entry> {
         private List<Entry> items;
         private int[] colors = new int[]{Color.BLACK, Color.DKGRAY};
-        private int[] textColors = new int[]{Color.GRAY, Color.LTGRAY};
+        private int[] textColors = new int[]{Color.LTGRAY, Color.WHITE};
         private String listAdapterTag;
 
         public ListAdapter(Context context, int textViewResourceId,
@@ -427,45 +431,43 @@ public class RssReaderApp extends ListActivity {
             if (item != null) {
                 TextView tView = (TextView) v.findViewById(R.id.rss_entry_row);
                 tView.setMovementMethod(ScrollingMovementMethod.getInstance());
-                if (tView != null) {
-                    listAdapterTag = this.getClass().getSimpleName();
-                    String feedItemContent;
-                    if (!RssReaderApp.isWithDescription()) {
-                        feedItemContent = parseContent(item.getTitle());
-                    } else {
-                        feedItemContent = parseContent(item.getTitle(), item.getDescription());
-                    }
-                    tView.setText(Html.fromHtml(feedItemContent));
-                    // Setting the URL link on clickable item
-                    tView.setOnClickListener(new OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Log.d(listAdapterTag,
-                                    getResources().getString(
-                                            R.string.url_detail)
-                                            + item.getLink().toString());
-                            //Activity updated
-                            try {
-                                // Start the activity
-                                Intent i = new Intent(Intent.ACTION_VIEW);
-                                i.setData(Uri.parse(item.getLink().toString()));
-                                startActivity(i);
-                            } catch (ActivityNotFoundException e) {
-                                // Raise on activity not found
-                                Toast.makeText(
-                                        RssReaderApp.this,
-                                        getResources().getString(
-                                                R.string.browser_not_found),
-                                        Toast.LENGTH_SHORT).show();
-                                Log.e(listAdapterTag, e.toString());
-                            }
-                        }
-                    });
-                    // Alternate Row Color
-                    int colorPos = position % colors.length;
-                    tView.setBackgroundColor(colors[colorPos]);
-                    tView.setTextColor(textColors[colorPos]);
+                listAdapterTag = this.getClass().getSimpleName();
+                String feedItemContent;
+                if (!RssReaderApp.isWithDescription()) {
+                    feedItemContent = parseContent(item.getTitle());
+                } else {
+                    feedItemContent = parseContent(item.getTitle(), item.getDescription());
                 }
+                tView.setText(Html.fromHtml(feedItemContent));
+                // Setting the URL link on clickable item
+                tView.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Log.d(listAdapterTag,
+                                getResources().getString(
+                                        R.string.url_detail)
+                                        + item.getLink().toString());
+                        //Activity updated
+                        try {
+                            // Start the activity
+                            Intent i = new Intent(Intent.ACTION_VIEW);
+                            i.setData(Uri.parse(item.getLink().toString()));
+                            startActivity(i);
+                        } catch (ActivityNotFoundException e) {
+                            // Raise on activity not found
+                            Toast.makeText(
+                                    RssReaderApp.this,
+                                    getResources().getString(
+                                            R.string.browser_not_found),
+                                    Toast.LENGTH_SHORT).show();
+                            Log.e(listAdapterTag, e.toString());
+                        }
+                    }
+                });
+                // Alternate Row Color
+                int colorPos = position % colors.length;
+                tView.setBackgroundColor(colors[colorPos]);
+                tView.setTextColor(textColors[colorPos]);
             }
             return v;
         }
@@ -474,10 +476,10 @@ public class RssReaderApp extends ListActivity {
          * Create html-like content for the TextView
          *
          * @param title Feed title
-         * @return
+         * @return html content
          */
         private String parseContent(String title) {
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             // Setting the title of the TextView
             sb.append("<b>");
             sb.append(title);
@@ -490,10 +492,10 @@ public class RssReaderApp extends ListActivity {
          *
          * @param title       Feed title
          * @param description descriptionor summary of the feed
-         * @return
+         * @return parsed string
          */
         private String parseContent(String title, String description) {
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             sb.append(parseContent(title));
             sb.append("<br>");
             sb.append("<small>");
