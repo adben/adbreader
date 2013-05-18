@@ -31,7 +31,6 @@ import android.util.Xml;
 public class RssXmlPullParser {
     // names of the XML tags
     static final String CHANNEL = "channel";
-    static final String PUB_DATE = "pubDate";
     static final String DESCRIPTION = "description";
     static final String LINK = "link";
     static final String TITLE = "title";
@@ -47,7 +46,7 @@ public class RssXmlPullParser {
             Entry currentEntry = null;
             boolean done = false;
             while (eventType != XmlPullParser.END_DOCUMENT && !done) {
-                String name = null;
+                String name;
                 switch (eventType) {
                     case XmlPullParser.START_DOCUMENT:
                         messages = new ArrayList<Entry>();
@@ -70,7 +69,9 @@ public class RssXmlPullParser {
                     case XmlPullParser.END_TAG:
                         name = parser.getName();
                         if (name.equalsIgnoreCase(ITEM) && currentEntry != null) {
-                            messages.add(currentEntry);
+                            if (messages != null) {
+                                messages.add(currentEntry);
+                            }
                         } else if (name.equalsIgnoreCase(CHANNEL)) {
                             done = true;
                         }

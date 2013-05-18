@@ -429,6 +429,7 @@ public class RssReaderApp extends ListActivity {
             }
             final Entry item = items.get(position);
             if (item != null) {
+                assert v != null;
                 TextView tView = (TextView) v.findViewById(R.id.rss_entry_row);
                 tView.setMovementMethod(ScrollingMovementMethod.getInstance());
                 listAdapterTag = this.getClass().getSimpleName();

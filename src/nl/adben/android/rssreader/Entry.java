@@ -65,18 +65,6 @@ public class Entry implements Comparable<Entry> {
         return FORMATTER.format(this.date);
     }
 
-    public void setDate(String date) {
-        // pad the date if necessary
-        while (!date.endsWith("00")) {
-            date += "0";
-        }
-        try {
-            this.date = FORMATTER.parse(date.trim());
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public Entry copy() {
         Entry copy = new Entry();
         copy.title = title;
