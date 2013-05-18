@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 The Android Open Source Project
+ * Copyright (C) 2013
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -41,6 +41,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
@@ -49,7 +50,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * Main Activity for the Rss Reader application.
@@ -73,38 +73,37 @@ public class RssReaderApp extends ListActivity {
     public static final String ANY = "Any";
     public static final String DEFAULT_URL = "http://news.ycombinator.com/rss";
     /*
-      * Whether there is a Wi-Fi connection.
-      */
+     * Whether there is a Wi-Fi connection.
+     */
     private static boolean wifiConnected = false;
     /*
-      * Whether there is a mobile connection.
-      */
+     * Whether there is a mobile connection.
+     */
     private static boolean mobileConnected = false;
     /*
-      * Whether the display should be refreshed.
-      */
+     * Whether the display should be refreshed.
+     */
     private static boolean refreshDisplay = true;
     /*
-      * The user's current network preference setting.
-      */
+     * The user's current network preference setting.
+     */
     private static String sPref = null;
     /*
-      * The user's current feed
-      */
+     * The user's current feed
+     */
     private static String sUrl = null;
     /*
      * The user selects if he wants to render the description
      */
     private static boolean withDescription = false;
     /*
-      * The BroadcastReceiver that tracks network connectivity changes.
-      */
+     * The BroadcastReceiver that tracks network connectivity changes.
+     */
     private NetworkReceiver receiver = new NetworkReceiver();
     /*
-      * Tag log
-      */
+     * Tag log
+     */
     private String applicationTag = this.getClass().getSimpleName();
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -129,23 +128,23 @@ public class RssReaderApp extends ListActivity {
         SharedPreferences sharedPrefs = PreferenceManager
                 .getDefaultSharedPreferences(this);
 
-        /*
-           * Retrieves a string value for the preferences. The second parameter is
-           * the default value to use if a preference value is not found.
-           */
+		/*
+         * Retrieves a string value for the preferences. The second parameter is
+		 * the default value to use if a preference value is not found.
+		 */
         setsPref(sharedPrefs.getString("listPref", WIFI));
         setsUrl(sharedPrefs.getString("listUrlPref", DEFAULT_URL));
         setWithDescription(sharedPrefs.getBoolean("summaryPref", false));
 
         updateConnectionStatus();
 
-        /*
-           * Only loads the TextView feeds if refreshDisplay is true. Otherwise,
-           * keeps previous display. For example, if the user has set "Wi-Fi only"
-           * in prefs and the device loses its Wi-Fi connection midway through the
-           * user using the app, you don't want to refresh the display--this would
-           * force the display of an error page instead of feed content.
-           */
+		/*
+         * Only loads the TextView feeds if refreshDisplay is true. Otherwise,
+		 * keeps previous display. For example, if the user has set "Wi-Fi only"
+		 * in prefs and the device loses its Wi-Fi connection midway through the
+		 * user using the app, you don't want to refresh the display--this would
+		 * force the display of an error page instead of feed content.
+		 */
         if (isRefreshDisplay()) {
             loadRss();
         }
@@ -155,6 +154,7 @@ public class RssReaderApp extends ListActivity {
     public void onDestroy() {
         super.onDestroy();
         if (receiver != null) {
+
             this.unregisterReceiver(receiver);
         }
     }
@@ -162,7 +162,8 @@ public class RssReaderApp extends ListActivity {
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        Log.d(applicationTag, getResources().getString(R.string.selected_item) + id);
+        Log.d(applicationTag, getResources().getString(R.string.selected_item)
+                + id);
 
     }
 
@@ -209,7 +210,8 @@ public class RssReaderApp extends ListActivity {
             Toast.makeText(RssReaderApp.this,
                     getResources().getString(R.string.loading_message),
                     Toast.LENGTH_LONG).show();
-            Log.d(applicationTag, getResources().getString(R.string.url_detail) + getsUrl());
+            Log.d(applicationTag, getResources().getString(R.string.url_detail)
+                    + getsUrl());
             new DownloadXmlTask().execute(getsUrl());
 
         } else {
@@ -254,7 +256,6 @@ public class RssReaderApp extends ListActivity {
         }
     }
 
-
     /**
      * Returns the preferences of the app instance
      */
@@ -289,7 +290,6 @@ public class RssReaderApp extends ListActivity {
     public static void setWithDescription(boolean withDescription) {
         RssReaderApp.withDescription = withDescription;
     }
-
 
     /**
      * Implementation of AsyncTask used to download XML feed from
@@ -360,10 +360,10 @@ public class RssReaderApp extends ListActivity {
                 entries = rssSource.parse(stream);
                 Log.d(downloadTaskTag,
                         getResources().getString(R.string.stream_closed_debug));
-                /*
-                     * Makes sure that the InputStream is closed after the app is
-                     * finished using it.
-                     */
+				/*
+				 * Makes sure that the InputStream is closed after the app is
+				 * finished using it.
+				 */
             } finally {
                 if (stream != null) {
                     stream.close();
@@ -392,7 +392,8 @@ public class RssReaderApp extends ListActivity {
             conn.setDoInput(true);
             // Starts the query
             conn.connect();
-            Log.d(downloadTaskTag, getResources().getString(R.string.query_started));
+            Log.d(downloadTaskTag,
+                    getResources().getString(R.string.query_started));
             return conn.getInputStream();
         }
 
@@ -412,7 +413,6 @@ public class RssReaderApp extends ListActivity {
             super(context, textViewResourceId, items);
             this.items = items;
         }
-
 
         /**
          * (non-Javadoc)
@@ -436,7 +436,8 @@ public class RssReaderApp extends ListActivity {
                 if (!RssReaderApp.isWithDescription()) {
                     feedItemContent = parseContent(item.getTitle());
                 } else {
-                    feedItemContent = parseContent(item.getTitle(), item.getDescription());
+                    feedItemContent = parseContent(item.getTitle(),
+                            item.getDescription());
                 }
                 tView.setText(Html.fromHtml(feedItemContent));
                 // Setting the URL link on clickable item
@@ -444,10 +445,9 @@ public class RssReaderApp extends ListActivity {
                     @Override
                     public void onClick(View v) {
                         Log.d(listAdapterTag,
-                                getResources().getString(
-                                        R.string.url_detail)
+                                getResources().getString(R.string.url_detail)
                                         + item.getLink().toString());
-                        //Activity updated
+                        // Activity updated
                         try {
                             // Start the activity
                             Intent i = new Intent(Intent.ACTION_VIEW);
@@ -499,7 +499,7 @@ public class RssReaderApp extends ListActivity {
             sb.append(parseContent(title));
             sb.append("<br>");
             sb.append("<small>");
-            //removing html
+            // removing html
             sb.append(Html.fromHtml(description));
             sb.append("</small>");
             return sb.toString();
