@@ -47,8 +47,8 @@ public class NetworkReceiver extends BroadcastReceiver {
         if (RssReaderApp.WIFI.equals(RssReaderApp.getsPref())
                 && networkInfo != null
                 && networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
-			/*
-			 * If device has its Wi-Fi connection, sets refreshDisplay to true.
+            /*
+             * If device has its Wi-Fi connection, sets refreshDisplay to true.
 			 * This causes the display to be refreshed when the user returns to
 			 * the app.
 			 */
@@ -58,7 +58,7 @@ public class NetworkReceiver extends BroadcastReceiver {
             Log.d(receiverTag, context.getResources().getString(R.string.wifi_conn));
 
 			/*
-			 * If the setting is ANY network and there is a network connection
+             * If the setting is ANY network and there is a network connection
 			 * (which by process of elimination would be mobile), sets
 			 * refreshDisplay to true.
 			 */

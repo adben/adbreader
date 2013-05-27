@@ -16,7 +16,6 @@ package nl.adben.android.rssreader;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 

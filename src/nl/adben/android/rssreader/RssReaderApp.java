@@ -41,7 +41,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
@@ -104,6 +103,41 @@ public class RssReaderApp extends ListActivity {
      * Tag log
      */
     private String applicationTag = this.getClass().getSimpleName();
+
+    /**
+     * Returns the preferences of the app instance
+     */
+    public static String getsPref() {
+        return sPref;
+    }
+
+    public static void setsPref(String sPref) {
+        RssReaderApp.sPref = sPref;
+    }
+
+    public static boolean isRefreshDisplay() {
+        return refreshDisplay;
+    }
+
+    public static void setRefreshDisplay(boolean refreshDisplay) {
+        RssReaderApp.refreshDisplay = refreshDisplay;
+    }
+
+    public static String getsUrl() {
+        return sUrl;
+    }
+
+    public static void setsUrl(String sUrl) {
+        RssReaderApp.sUrl = sUrl;
+    }
+
+    public static boolean isWithDescription() {
+        return withDescription;
+    }
+
+    public static void setWithDescription(boolean withDescription) {
+        RssReaderApp.withDescription = withDescription;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -229,8 +263,8 @@ public class RssReaderApp extends ListActivity {
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.mainmenu, menu);
+        MenuInflater menuInflate = getMenuInflater();
+        menuInflate.inflate(R.menu.mainmenu, menu);
         return true;
     }
 
@@ -254,41 +288,6 @@ public class RssReaderApp extends ListActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    /**
-     * Returns the preferences of the app instance
-     */
-    public static String getsPref() {
-        return sPref;
-    }
-
-    public static void setsPref(String sPref) {
-        RssReaderApp.sPref = sPref;
-    }
-
-    public static boolean isRefreshDisplay() {
-        return refreshDisplay;
-    }
-
-    public static void setRefreshDisplay(boolean refreshDisplay) {
-        RssReaderApp.refreshDisplay = refreshDisplay;
-    }
-
-    public static String getsUrl() {
-        return sUrl;
-    }
-
-    public static void setsUrl(String sUrl) {
-        RssReaderApp.sUrl = sUrl;
-    }
-
-    public static boolean isWithDescription() {
-        return withDescription;
-    }
-
-    public static void setWithDescription(boolean withDescription) {
-        RssReaderApp.withDescription = withDescription;
     }
 
     /**
@@ -360,8 +359,8 @@ public class RssReaderApp extends ListActivity {
                 entries = rssSource.parse(stream);
                 Log.d(downloadTaskTag,
                         getResources().getString(R.string.stream_closed_debug));
-				/*
-				 * Makes sure that the InputStream is closed after the app is
+                /*
+                 * Makes sure that the InputStream is closed after the app is
 				 * finished using it.
 				 */
             } finally {
@@ -492,7 +491,7 @@ public class RssReaderApp extends ListActivity {
          * Create html-like content for the TextView
          *
          * @param title       Feed title
-         * @param description descriptionor summary of the feed
+         * @param description description summary of the feed
          * @return parsed string
          */
         private String parseContent(String title, String description) {

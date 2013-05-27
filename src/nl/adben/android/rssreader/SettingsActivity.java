@@ -14,12 +14,9 @@
 
 package nl.adben.android.rssreader;
 
-import android.annotation.TargetApi;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 
 /**
@@ -30,7 +27,6 @@ import android.preference.PreferenceFragment;
 public class SettingsActivity extends PreferenceFragment implements
         OnSharedPreferenceChangeListener {
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,7 +34,6 @@ public class SettingsActivity extends PreferenceFragment implements
         addPreferencesFromResource(R.xml.preferences);
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public void onResume() {
         super.onResume();

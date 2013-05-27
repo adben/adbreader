@@ -14,14 +14,13 @@
 
 package nl.adben.android.rssreader;
 
+import android.util.Log;
+import android.util.Xml;
+import org.xmlpull.v1.XmlPullParser;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.xmlpull.v1.XmlPullParser;
-
-import android.util.Log;
-import android.util.Xml;
 
 /**
  * Parses the rss feeds using XmlPullParser for android
@@ -80,7 +79,7 @@ public class RssXmlPullParser {
                 eventType = parser.next();
             }
         } catch (Exception e) {
-            Log.e("RssREaderParser::PullFeedParser", e.getMessage(), e);
+            Log.e("RssReaderParser::PullFeedParser", e.getMessage(), e);
             throw new RuntimeException(e);
         }
         return messages;
